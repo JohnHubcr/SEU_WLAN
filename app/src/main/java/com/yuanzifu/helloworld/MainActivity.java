@@ -1,5 +1,7 @@
 package com.yuanzifu.helloworld;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -7,23 +9,19 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Gallery;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -56,29 +54,18 @@ public class MainActivity extends ActionBarActivity {
                 //Toast.makeText(getApplicationContext(), login_name+"-"+login_password, Toast.LENGTH_LONG).show();
 
                 /*sent post to server*/
-                NameValuePair pair1 = new BasicNameValuePair("username", login_name);
-                NameValuePair pair2 = new BasicNameValuePair("password", login_password);
-                List list = new ArrayList();
-                list.add(pair1);
-                list.add(pair2);
-                try {
-                    HttpEntity httpEntity = new UrlEncodedFormEntity(list);//使用编码构建Post实体
-                    HttpPost post = new HttpPost(util.getPOST_URL());
-                    post.setEntity(httpEntity);//设置Post实体
-                    HttpClient client = new DefaultHttpClient();
-                    HttpResponse response = client.execute(post);//执行Post方法
-                    String resultString = EntityUtils.toString(response.getEntity());
-                    show_textvied.setText(resultString);
-                } catch (UnsupportedEncodingException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (ClientProtocolException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("username", "220131440");
+                params.put("password", "574423");
+                String result = HttpUtils.sendPostMessage(params, "utf-8");
+                System.out.println("System-test");
+                System.out.println("System-" + result);
+                HttpUtils.main(null);
+
+                show_textvied.setText(result);
+
+                showImage();
+
 
             }
         });
@@ -106,5 +93,42 @@ public class MainActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+
+    private void showImage() {
+        ImageView iv = new ImageView(this);
+        iv.setBackgroundColor(0xFFFFFFFF);
+        iv.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        iv.setLayoutParams(new Gallery.LayoutParams(40, 40));
+        downloadAndShowInternetFile("http://www.twicular.com/images/top_07.png", iv);
+        this.setContentView(iv);
+    }
+
+    void downloadAndShowInternetFile(String url, ImageView iv) {
+        URL internetUrl = null;
+        try {
+            internetUrl = new URL(url);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        HttpURLConnection conn = null;
+        try {
+            conn = (HttpURLConnection) internetUrl.openConnection();
+            conn.setDoInput(true);
+            conn.connect();
+
+            InputStream is = conn.getInputStream();
+            Bitmap bmImg = BitmapFactory.decodeStream(is);
+            iv.setImageBitmap(bmImg);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (conn != null) {
+                conn.disconnect();
+            }
+        }
+
     }
 }
