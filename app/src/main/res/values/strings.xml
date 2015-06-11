@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Hello world</string>
+    <string name="app_name">SEU_WLAN</string>
 
     <string name="hello_world">欢迎使用SEU_Wlan, by fuhao.li</string>
     <string name="action_settings">Settings</string>
