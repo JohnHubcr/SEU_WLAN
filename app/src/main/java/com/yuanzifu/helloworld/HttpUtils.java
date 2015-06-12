@@ -16,8 +16,8 @@ public class HttpUtils
 {
 
     // 请求服务器端的url
-    //private static String PATH = "https://w.seu.edu.cn/portal/login.php";
-    private static String PATH = "http://www.seu.edu.cn";
+    private static String PATH = "https://w.seu.edu.cn/portal/login.php";
+    //private static String PATH = "https://www.baidu.com";
     private static URL url;
 
     public HttpUtils()
